@@ -44,7 +44,7 @@ flame
 11  Y2 
 12  etc
 """
-module ReadFiles
+module SunsetFileIO
 
 export
     FieldValue,
@@ -68,7 +68,7 @@ export
     check_position,
     get_field_index,
     get_field_by_name,
-    zip,
+    zip_array,
     get_positions,
     set_field_by_name!,
     set_positions!,
@@ -78,26 +78,31 @@ export
     reflect!,
     scale!,
     translate!,
-    check_node_skip_stride,
-    check_node_skip_box,
-    skip_indices!,
-    shuffle_skip!,
+    keep_check_stride,
+    keep_check_box,
+    keep_check_max,keep_indices,
+    keep_indices,
+    keep_indices!,
+    get_shuffle_keep_indices,
 
     read_nodes_files,
     read_fields_files,
-    read_IPART_files,
+    read_IPART_file,
     read_flame_files,
     read_nodes_and_fields_files,
     ask_file_type,
     ask_skip,
-    ask_scale
+    ask_scale,
+
+    open_and_write_vtu
 
 
-using Random
+using Random, Dates
 
 include("fields.jl")
 include("node_sets.jl")
 include("read_files.jl")
+include("vtu_writer.jl")
 
 
 end

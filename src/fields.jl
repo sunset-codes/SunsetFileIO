@@ -31,6 +31,8 @@ Y_fields(Y) = [Field(Y_string(i_Y), Float64) for i_Y in 1:Y]
 
 rhoE_field = Field("rhoE", Float64)
 
+proc_field = Field("proc", Int64)
+
 nodes_fields(D) = Field[
     position_fields(D)...,
     s_field,
