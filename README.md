@@ -1,7 +1,9 @@
 # SunsetFileIO
-This package is designed for the ease of use of the [sunset-flames](https://github.com/sunset-codes/sunset-flames) CFD code. For best use, clone the [sunset-tools](https://github.com/sunset-codes/sunset-tools) repo which contain scripts using this package.
+This package is designed for the ease of use of the [sunset-flames](https://github.com/sunset-codes/sunset-flames) CFD code. For best use, clone the [sunset-tools](https://github.com/sunset-codes/sunset-tools) repo which contains scripts which best use this package.
 
 NB: For the moment I don't plan on adding this package as a fully fledged official Julia package because, frankly, that wouldn't help.
+
+If anything breaks or you don't understand something, let me know!
 
 ## Prerequisites
 - Julia 1.10
