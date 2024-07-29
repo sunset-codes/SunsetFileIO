@@ -93,6 +93,7 @@ export
     ask_file_type,
     ask_skip,
     ask_scale,
+    ask_reflect,
 
     open_and_write_vtu
 
