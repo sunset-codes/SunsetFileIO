@@ -50,8 +50,8 @@ export
     FieldValue,
     Field,
     axes_strings,
-    v_string,
-    n_string,
+    v_strings,
+    n_strings,
     Y_string,
     position_fields,
     v_fields,
@@ -73,7 +73,7 @@ export
     set_field_by_name!,
     set_positions!,
     add_field!,
-    add_dimension!,
+    # add_dimension!,
     copy_node_set,
     reflect!,
     scale!,
@@ -90,6 +90,7 @@ export
     read_IPART_file,
     read_flame_files,
     read_nodes_and_fields_files,
+    read_vtu_file,
     ask_file_type,
     ask_skip,
     ask_scale,
@@ -98,7 +99,7 @@ export
     open_and_write_vtu
 
 
-using Random, Dates
+using Random, Dates, WriteVTK, ReadVTK, DelimitedFiles
 
 include("fields.jl")
 include("node_sets.jl")

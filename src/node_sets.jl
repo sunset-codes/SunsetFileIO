@@ -141,16 +141,16 @@ function add_field!(node_set, field, values)
     return nothing
 end
 
-function add_dimension!(node_set, D, desired_D)
-    if D < desired_D
-        for i_axis in (D + 1):desired_D
-            check_field(node_set, "x")   && add_field!(node_set, Field(axes_strings[i_axis], Float64), [zero(Float64) for i_node in axes(node_set.set, 1)])
-            check_field(node_set, "v_x") && add_field!(node_set, Field(v_string(i_axis), Float64), [zero(Float64) for i_node in axes(node_set.set, 1)])
-            check_field(node_set, "n_x") && add_field!(node_set, Field(n_string(i_axis), Float64), [zero(Float64) for i_node in axes(node_set.set, 1)])
-        end
-    end
-    return nothing
-end
+# function add_dimension!(node_set, D, desired_D)
+#     if D < desired_D
+#         for i_axis in (D + 1):desired_D
+#             check_field(node_set, "x")   && add_field!(node_set, Field(axes_strings[i_axis], Float64), [zero(Float64) for i_node in axes(node_set.set, 1)])
+#             check_field(node_set, "v_x") && add_field!(node_set, Field(v_string(i_axis), Float64), [zero(Float64) for i_node in axes(node_set.set, 1)])
+#             check_field(node_set, "n_x") && add_field!(node_set, Field(n_string(i_axis), Float64), [zero(Float64) for i_node in axes(node_set.set, 1)])
+#         end
+#     end
+#     return nothing
+# end
 
 function copy_node_set(node_set)
     new_set = Node[Node(copy(node.fields), copy(node.values)) for node in node_set.set]

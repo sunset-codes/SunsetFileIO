@@ -87,6 +87,10 @@ function read_nodes_and_fields_files(node_files_set, data_out_path, D, Y, n_core
 end
 
 
+function read_vtu_file()
+
+end
+
 
 
 
