@@ -68,6 +68,13 @@ function join_node_sets(node_sets...)
     return NodeSet(vcat([node_set.set for node_set in node_sets_copies]...))
 end
 
+
+vector_fields_scalars = Dict(
+    "position" => axes_strings,
+    "velocity" => v_strings,
+    "normal" => n_strings
+)
+
 # true if has field false otherwise
 function check_field(node_set :: NodeSet, field_name)
     return check_field(node_set.set[1], field_name)
@@ -77,6 +84,21 @@ end
 function check_position(node_set)
     axis_present = Bool[check_field(node_set, axis_string) for axis_string in axes_strings]
     return count(==(true), axis_present)
+end
+
+function check_vector_field(node_set, vector_field_name)
+    scalars_preset = [check_field(node_set, field_name) for field_name in vector_fields_scalars[vector_field_name]]
+    return count(==(true), scalars_preset)
+end
+
+"""
+Can zip or unzip because both operations turn arrays of arrays into arrays of arrays.
+
+Zipping helps make the transformations easier.
+"""
+function zip_array(a_a_f)
+    a_f_a = [[a_a_f[i_field][i_node] for i_field in axes(a_a_f, 1)] for i_node in axes(a_a_f[1], 1)]
+    return a_f_a
 end
 
 function get_field_index(node_set :: NodeSet, field_name)
@@ -89,20 +111,18 @@ function get_field_by_name(node_set :: NodeSet, field_name)
     return field_type[node_set.set[i_node].values[i_name_field] for i_node in axes(node_set.set, 1)]
 end
 
-# Can zip or unzip because everything is arrays
-function zip_array(a_a_f)
-    a_f_a = [[a_a_f[i_field][i_node] for i_field in axes(a_a_f, 1)] for i_node in axes(a_a_f[1], 1)]
-    return a_f_a
+function get_vector_by_name(node_set, vector_field_name)
+    D = check_vector_field(node_set, vector_field_name)
+    if D == 0
+        throw(ArgumentError(string("This node set contains no ", vector_field_name)))
+    end
+    scalar_field_names = vector_fields_scalars[vector_field_name][1:D]
+    scalar_field_values = [get_field_by_name(node_set, name) for name in scalar_field_names]
+    return zip_array(scalar_field_values)
 end
 
 function get_positions(node_set)
-    D = check_position(node_set)
-    if D == 0
-        throw(ArgumentError("This node set contains no positions"))
-    end
-    node_set_positions = [get_field_by_name(node_set, axes_strings[i_axis]) for i_axis in 1:D]
-    zip_node_positions = zip_array(node_set_positions)
-    return zip_node_positions
+    return get_vector_by_name(node_set, "position")
 end
 
 function set_field_by_name!(node_set, field_name, field_values)
@@ -117,11 +137,19 @@ function set_field_by_name!(node_set, field_name, field_values)
     return nothing
 end
 
-function set_positions!(node_set, positions_zipped)
-    positions_unzipped = zip_array(positions_zipped)
-    for i_axis in axes(positions_zipped[1], 1)
-        set_field_by_name!(node_set, axes_strings[i_axis], positions_unzipped[i_axis])
+function set_vector_field_by_name!(node_set, vector_field_name, vector_field_values_zipped)
+    D = check_vector_field(node_set, vector_field_name)
+    if D == 0
+        throw(ArgumentError(string("This node set contains no ", vector_field_name)))
     end
+    vector_field_values_unzipped = zip_array(vector_field_values_zipped)
+    for i_scalar_field in 1:D
+        set_field_by_name!(node_set, vector_fields_scalars[vector_field_name][i_scalar_field], vector_field_values_unzipped[i_scalar_field])
+    end
+end
+
+function set_positions!(node_set, positions_zipped)
+    set_vector_field_by_name!(node_set, "position", positions_zipped)
     return nothing
 end
 
@@ -141,6 +169,11 @@ function add_field!(node_set, field, values)
     return nothing
 end
 
+function copy_node_set(node_set)
+    new_set = Node[Node(copy(node.fields), copy(node.values)) for node in node_set.set]
+    return NodeSet(new_set)
+end
+
 # function add_dimension!(node_set, D, desired_D)
 #     if D < desired_D
 #         for i_axis in (D + 1):desired_D
@@ -152,58 +185,64 @@ end
 #     return nothing
 # end
 
-function copy_node_set(node_set)
-    new_set = Node[Node(copy(node.fields), copy(node.values)) for node in node_set.set]
-    return NodeSet(new_set)
+
+
+dot(x, y) = sum(x .* y)
+
+function translate!(vectors, p)
+    vectors = [vector + p for vector in vectors]
+    return nothing
+end    
+
+"""
+Reflect the vectors contained in vectors on the line 0 to p
+"""
+function reflect_origin!(vectors :: T, p) where { T <: AbstractVector }
+    for (i_node, v) in enumerate(vectors)
+        l_v = dot(p, v) / dot(p, p)
+        v_new = 2 * (l_v * p) - v
+        vectors[i_node] = v_new
+    end
+    return nothing
 end
 
+function scale!(vectors :: T, scaling) where { T <: AbstractVector }
+    vectors = [vector * scaling for vector in vectors]
+    return nothing
+end
 
-
-function reflect!(node_set, p1, p2)
-    D = check_position(node_set)
-    if D != length(p1) || D != length(p2)
+function reflect!(node_set :: NodeSet, p1, p2)
+    if length(p2) != length(p1)
         throw(ArgumentError("Position dimensions don't match"))
     end
-    node_positions = get_positions(node_set)
-    for (i_node, position) in enumerate(node_positions)
-        dot(x, y) = sum(x .* y)
-        l_x = dot(p2 - p1, position - p1) / dot(p2 - p1, p2 - p1)
-        new_position = position + 2 * (p1 + l_x * (p2 - p1) - position)
-        node_positions[i_node] = new_position
+    # Reflect every vector field
+    for (vector_field_name, _) in filter(vector_field_scalar_fields -> check_vector_field(node_set, vector_field_scalar_fields.first) != 0, vector_fields_scalars)
+        vectors = get_vector_by_name(node_set, vector_field_name)
+        vector_field_name == "position" && translate!(vectors, -p1)
+        reflect_origin!(vectors, p2 - p1)
+        vector_field_name == "position" && translate!(vectors, p1)
+        set_vector_field_by_name!(node_set, vector_field_name, vectors)
     end
-    set_positions!(node_set, node_positions)
+    # Invert Vorticity for 2D flows
+    check_field(node_set, "vort") && set_field_by_name!(node_set, "vort", -get_field_by_name(node_set, "vort"))
     return nothing
 end
 
 # We do not allow vector arguments as stretching is not allowed for these LABFM nodes
-function scale!(node_set, scale :: T) where { T <: Real }
+function scale!(node_set :: NodeSet, scaling)
     # Scale positions
     node_positions = get_positions(node_set)
-    for (i_node, position) in enumerate(node_positions)
-        node_positions[i_node] = position .* scale
-    end
+    scale!(node_positions, scaling)
     set_positions!(node_set, node_positions)
     # Scaling also affects s and h if they're there
-    if check_field(node_set, "s")
-        s = get_field_by_name(node_set, "s")
-        set_field_by_name!(node_set, "s", s .* scale)
-    end
-    if check_field(node_set, "h")
-        h = get_field_by_name(node_set, "h")
-        set_field_by_name!(node_set, "h", h .* scale)
-    end
+    check_field(node_set, "s") && set_field_by_name!(node_set, "s", get_field_by_name(node_set, "s") .* scaling)
+    check_field(node_set, "h") && set_field_by_name!(node_set, "h", get_field_by_name(node_set, "h") .* scaling)
     return nothing
 end
 
-function translate!(node_set, p)
-    D = check_position(node_set)
-    if D != length(p)
-        throw(ArgumentError("Position dimensions don't match"))
-    end
+function translate!(node_set :: NodeSet, p)
     node_positions = get_positions(node_set)
-    for (i_node, position) in enumerate(node_positions)
-        node_positions[i_node] = position .+ p
-    end
+    translate!(node_positions, p)
     set_positions!(node_set, node_positions)
     return nothing
 end

@@ -219,7 +219,7 @@ function ask_skip()
         printstyled("Use 1/# of the nodes\n", color = :blue)
         temp_str = readline()
         arg_stride_n = parse(Int64, temp_str)
-        push!(keep_check_f_and_args, [skip_check_stride, (arg_stride_n, )])
+        push!(keep_check_f_and_args, [keep_check_stride, (arg_stride_n, )])
     end
     
     printstyled("Enforce a maximum number of nodes?\n", color = :blue)
