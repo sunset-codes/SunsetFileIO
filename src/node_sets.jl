@@ -31,7 +31,7 @@ function stitch_node_sets(node_sets...)
     end
     # Then stitch. Stitching is the hcat above
     reduced_set = new_set[:, reduced_fields_indices]
-    return Node_set(reduced_fields, reduced_set)
+    return NodeSet(reduced_fields, reduced_set)
 end
 
 function join_node_sets(node_sets...)
@@ -141,7 +141,7 @@ function add_field!(node_set, field, values)
         return nothing
     end
     push!(node_set.fields, field)
-    hcat(node_set.set, values)
+    node_set.set = hcat(node_set.set, values)
     return nothing
 end
 

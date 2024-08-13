@@ -93,7 +93,7 @@ function get_nice_field_title(names)
             names_title = "Coordinate"
         elseif names[1] in v_strings
             names_title = "Velocity"
-        elseif names[1] in v_strings
+        elseif names[1] in n_strings
             names_title = "Boundary Normal"
         else
             names_title = string("(", join(get_nice_field_title.(names), ", "), ")")

@@ -12,7 +12,7 @@ function read_nodes_files(data_out_path, D, n_cores)
     node_sets = NodeSet[]
     for i_core in 0:(n_cores - 1)
         new_node_set = read_file(nodes_file_path(data_out_path, i_core), nodes_fields(D), 1)
-        add_field!(new_node_set, proc_field, [i_core for _ in 1:length(node_set)])
+        add_field!(new_node_set, proc_field, [i_core for _ in 1:length(new_node_set)])
         push!(node_sets, new_node_set)
     end
     return join_node_sets(node_sets...)
