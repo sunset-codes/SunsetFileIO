@@ -1,6 +1,5 @@
 vtu_start = """
 <?xml version="1.0"?>
-
 <VTKFile type= "UnstructuredGrid"  version= "0.1"  byte_order= "BigEndian">
   <UnstructuredGrid>
 """
@@ -103,10 +102,10 @@ function get_nice_field_title(names)
     return names_title
 end
 
-function write_vtu_data_array(out_file, type :: T, name, data_array) where { T <: Union{AbstractString, Type} }
-    write(out_file, vtu_start_data_array(type, name; n_components = 1))
-    for datum in data_array                          # Only write those nodes which have been included
-        write(out_file, string(datum))                     # Having no whitespace saves up to ~60% on storage space
+function write_vtu_data_array(out_file, type :: T, name, data_vector :: S) where { T <: Union{AbstractString, Type}, S <: AbstractVector }
+    write(out_file, vtu_start_data_array(type, name; n_components = length(data_vector[1])))
+    for datum in data_vector
+        write(out_file, typeof(data_vector).parameters[1] <: AbstractVector ? join(datum, " ") : string(datum))  # Having no whitespace saves up to ~60% on storage space
         write(out_file, "\n")
     end
     write(out_file, vtu_end_data_array)
@@ -117,77 +116,62 @@ function write_vtu_data_array(out_file, node_set, use_name :: Bool, field_names.
     old_type = node_set.set[1].fields[field_indices[1]].type
     new_type = reduce_types(old_type)
     
-    write(out_file, vtu_start_data_array(new_type, use_name ? join(field_names, " ") : ""; n_components = length(field_names)))
+    write(out_file, vtu_start_data_array(new_type, use_name ? get_nice_field_title([field_names...]) : ""; n_components = length(field_names)))
     
     zipped_values = zip_array([get_field_by_name(node_set, field_name) for field_name in field_names])
     for node_values in zipped_values
-        write(out_file, string(join(new_type.(node_values), " \t")))    # Having no whitespace saves up to ~60% on storage space
+        write(out_file, join(new_type.(node_values), " "))    # Having no whitespace saves up to ~60% on storage space
         write(out_file, "\n")
     end
     write(out_file, vtu_end_data_array)
 end
 
+function write_vtu_point(out_file, node_set)
+    write(out_file, vtu_start_points)
 
-function open_and_write_vtu(out_file_path, node_set, D)
-    coords_vecs = [get_field_by_name(node_set, axis_string) for axis_string in axes_strings[1:D]]
-    coords = [coords_vecs[i][j] for i in axes(coords_vecs, 1), j in axes(coords_vecs[1], 1)]
+    positions = zip_array(get_positions(node_set))
+    push!(positions, zeros(Float32, length(positions[1])))
+    positions = zip_array([Float32.(axis_array) for axis_array in positions])
+    write_vtu_data_array(out_file, "Float32", "Points", positions)
 
-    connectivity = 1:length(node_set.set) |> collect
-    cells = [MeshCell(VTKCellTypes.VTK_VERTEX, [con]) for con in connectivity]
+    write(out_file, vtu_end_points)
+end
 
-    # vtk_grid(
-    #     out_file_path,
-    #     coords,
-    #     cells;
-    #     ascii = true,
-    #     append = false
-    # ) do vtu_file
-    #     names = [field.name for field in node_set.set[1].fields]
-    #     grouped_names = group_names(node_set, names)
-    #     for names in grouped_names
-    #         is_fields = [get_field_index(node_set, name) for name in names]
-    #         old_types = [node_set.set[1].fields[i_field].type for i_field in is_fields]
-    #         new_types = [reduce_types(old_type) for old_type in old_types]
+function write_vtu_point_data(out_file, node_set)
+    write(out_file, vtu_start_point_data)
 
-    #         fields_data_vecs = [get_field_by_name(node_set, name) for name in names]
-    #         fields_data = [new_types[i](fields_data_vecs[i][j]) for i in axes(fields_data_vecs, 1), j in axes(fields_data_vecs[1], 1)]
+    field_names = [field.name for field in node_set.set[1].fields]
+    grouped_names = group_names(node_set, field_names)
+    for names in grouped_names
+        write_vtu_data_array(out_file, node_set, true, names...)
+    end
 
-    #         vtu_file[get_nice_field_title(names)] = fields_data
-    #     end
-    # end
+    write(out_file, vtu_end_point_data)
+end
 
+function write_vtu_cells(out_file, node_set)
+    write(out_file, vtu_start_cells)
+
+    write_vtu_data_array(out_file, "Int32", "connectivity", [i_node - 1 for i_node in axes(node_set.set, 1)])
+    write_vtu_data_array(out_file, "Int32", "offsets", [i_node for i_node in axes(node_set.set, 1)])
+    write_vtu_data_array(out_file, "Int32", "types", [1 for i_node in axes(node_set.set, 1)])
+
+    write(out_file, vtu_end_cells)    
+end
+
+function open_and_write_vtu(out_file_path, node_set)
     open(out_file_path, "w") do out_file
         ## Beginning stuff
         write(out_file, vtu_start)
-        write(out_file, vtu_start_piece(length(new_node_set.set)))
+        write(out_file, vtu_start_piece(length(node_set.set)))
         
         ## Main stuff
         # Points
-        write(out_file, vtu_start_points)
-
-        write_vtu_data_array(out_file, node_set, false, axes_strings[1:3]...)
-    
-        write(out_file, vtu_end_points)
-    
+        write_vtu_point(out_file, node_set)
         # Point data
-        write(out_file, vtu_start_point_data)
-
-        names = [field.name for field in node_set.set[1].fields]
-        grouped_names = group_names(node_set, names)
-        for names in grouped_names
-            write_vtu_data_array(out_file, node_set, true, names...)
-        end
-    
-        write(out_file, vtu_end_point_data)
-    
+        write_vtu_point_data(out_file, node_set)
         # Cells
-        write(out_file, vtu_start_cells)
-
-        write_vtu_data_array(out_file, "Int32", "connectivity", [i_node - 1 for i_node in axes(node_set.set, 1)])
-        write_vtu_data_array(out_file, "Int32", "offsets", [i_node for i_node in axes(node_set.set, 1)])
-        write_vtu_data_array(out_file, "Int32", "types", [1 for i_node in axes(node_set.set, 1)])
-    
-        write(out_file, vtu_end_cells)    
+        write_vtu_cells(out_file, node_set)
         
         ## End stuff
         write(out_file, vtu_end_piece)
