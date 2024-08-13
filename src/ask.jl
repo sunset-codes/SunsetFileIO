@@ -103,16 +103,16 @@ function ask_skip()
         return keep_check_f_and_args
     end
 
-    printstyled("Constant node spacing?\n", color = :blue)
-    temp_str = readline()
-    arg_do_boxing = parse(Bool, temp_str)
+    # printstyled("Constant node spacing?\n", color = :blue)
+    # temp_str = readline()
+    # arg_do_boxing = parse(Bool, temp_str)
     
-    if arg_do_boxing
-        printstyled("New spacing\n", color = :blue)
-        temp_str = readline()
-        arg_box_size = parse(Float64, temp_str)
-        push!(keep_check_f_and_args, [keep_check_box, (arg_box_size, )])
-    end
+    # if arg_do_boxing
+    #     printstyled("New spacing\n", color = :blue)
+    #     temp_str = readline()
+    #     arg_box_size = parse(Float64, temp_str)
+    #     push!(keep_check_f_and_args, [keep_check_box, (arg_box_size, )])
+    # end
     
     printstyled("Stride?\n", color = :blue)
     temp_str = readline()

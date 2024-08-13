@@ -51,14 +51,14 @@ keep_check_f_and_args are
 - A tuple of arguments to that function which will get splatted in
 """
 function get_shuffle_keep_indices(node_set, keep_check_f_and_args...)
-    indices_shuffled = shuffle(axes(node_set.set, 1))
+    indices_shuffled = axes(node_set.set, 1)#shuffle(axes(node_set.set, 1))
     
     for (keep_check_f, keep_check_args) in keep_check_f_and_args
         keep_check = keep_check_f(node_set, indices_shuffled, keep_check_args...)
         indices_shuffled = indices_shuffled[findall(keep_check)]
     end
 
-    return sort(indices_shuffled)
+    return indices_shuffled#sort(indices_shuffled)
 end
 
 
