@@ -49,7 +49,7 @@ function read_IPART_file(file_path, D, n_line_skip)
     return node_set
 end
 
-function read_flame_files(data_out_path, D, Y, n_cores, i_frame)
+function read_flames_file(data_out_path, D, Y, n_cores, i_frame)
     node_sets = NodeSet[]
     for i_core in 0:(n_cores - 1)
         new_node_set = read_file(flame_file_path(data_out_path, i_core, i_frame), flame_fields(D, Y), 0)
@@ -57,6 +57,12 @@ function read_flame_files(data_out_path, D, Y, n_cores, i_frame)
     end
     return join_node_sets(node_sets...)
 end
+
+
+function read_vtu_file()
+
+end
+
 
 
 
@@ -71,10 +77,6 @@ function read_nodes_and_fields_files(node_files_set, data_out_path, D, Y, n_core
     return stitch_node_sets(node_files_set, fields_set)
 end
 
-
-function read_vtu_file()
-
-end
 
 
 

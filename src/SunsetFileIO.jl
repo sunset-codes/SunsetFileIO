@@ -101,9 +101,9 @@ export
     read_nodes_files,
     read_fields_files,
     read_IPART_file,
-    read_flame_files,
-    read_nodes_and_fields_files,
+    read_flames_file,
     read_vtu_file,
+    read_nodes_and_fields_files,
 
     ask_file_type,
     ask_skip,
