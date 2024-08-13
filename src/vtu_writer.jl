@@ -113,7 +113,7 @@ end
 
 function write_vtu_data_array(out_file, node_set, use_name :: Bool, field_names...)
     field_indices = [get_field_index(node_set, field_name) for field_name in field_names]
-    old_type = node_set.set[1].fields[field_indices[1]].type
+    old_type = node_set.fields[field_indices[1]].type
     new_type = reduce_types(old_type)
     
     write(out_file, vtu_start_data_array(new_type, use_name ? get_nice_field_title([field_names...]) : ""; n_components = length(field_names)))
@@ -140,7 +140,7 @@ end
 function write_vtu_point_data(out_file, node_set)
     write(out_file, vtu_start_point_data)
 
-    field_names = [field.name for field in node_set.set[1].fields]
+    field_names = [field.name for field in node_set.fields]
     grouped_names = group_names(node_set, field_names)
     for names in grouped_names
         write_vtu_data_array(out_file, node_set, true, names...)
@@ -163,7 +163,7 @@ function open_and_write_vtu(out_file_path, node_set)
     open(out_file_path, "w") do out_file
         ## Beginning stuff
         write(out_file, vtu_start)
-        write(out_file, vtu_start_piece(length(node_set.set)))
+        write(out_file, vtu_start_piece(length(node_set)))
         
         ## Main stuff
         # Points

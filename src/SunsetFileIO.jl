@@ -60,7 +60,6 @@ export
     IPART_fields,
     flame_fields,
 
-    Node,
     NodeSet,
     stitch_node_sets,
     join_node_sets,
@@ -73,11 +72,13 @@ export
     set_field_by_name!,
     set_positions!,
     add_field!,
-    # add_dimension!,
     copy_node_set,
+
+    reflect_origin!,
     reflect!,
     scale!,
     translate!,
+
     keep_check_stride,
     keep_check_box,
     keep_check_max,keep_indices,
@@ -103,7 +104,10 @@ using Random, Dates, WriteVTK, ReadVTK, DelimitedFiles
 
 include("fields.jl")
 include("node_sets.jl")
+include("transform.jl")
+include("skip.jl")
 include("read_files.jl")
+include("ask.jl")
 include("vtu_writer.jl")
 
 
