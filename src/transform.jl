@@ -1,7 +1,9 @@
 dot(x, y) = sum(x .* y)
 
+
+
 function translate!(vectors, p)
-    vectors = [vector + p for vector in vectors]
+    vectors .= [vector + p for vector in vectors]
     return nothing
 end    
 
