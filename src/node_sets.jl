@@ -3,12 +3,6 @@ mutable struct NodeSet
     set :: Matrix{FieldValue}
 end
 
-"""
-Returns the number of nodes in this node set
-"""
-function Base.length(node_set :: NodeSet)
-    return size(node_set.set, 1)
-end
 
 function stitch_node_sets(node_sets...)
     # Take copies of node_sets
@@ -109,7 +103,7 @@ function get_positions(node_set)
     return get_vector_by_name(node_set, "position")
 end
 
-function set_field_by_name!(node_set, field_name, field_values)
+function set_field_by_name!(node_set :: NodeSet, field_name, field_values)
     if length(node_set) != length(field_values)
         throw(ArgumentError("Mismatch in number of nodes"))
     end

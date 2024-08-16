@@ -86,6 +86,18 @@ export
     add_field!,
     copy_node_set,
 
+    getindex,
+    setindex!,
+    firstindex,
+    lastindex,
+    iterate,
+    IteratorSize,
+    IteratorEltype,
+    eltype,
+    length,
+    size,
+    isdone,
+
     reflect_origin!,
     reflect!,
     scale!,
@@ -117,6 +129,7 @@ using Random, Dates, WriteVTK, ReadVTK, DelimitedFiles
 
 include("fields.jl")
 include("node_sets.jl")
+include("iteration_indexing.jl")
 include("transform.jl")
 include("skip.jl")
 include("read_files.jl")
