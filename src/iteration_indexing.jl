@@ -88,12 +88,9 @@ function Base.length(node_set :: NodeSet)
 end
 
 function Base.size(node_set :: NodeSet)
-    return size(node_set.set)
+    return size(node_set.set, 1)
 end
 
-function Base.size(node_set :: NodeSet, dim)
-    return size(node_set.set, dim)
-end
 
 function Base.isdone(node_set :: NodeSet)
     return length(node_set) <= 0
@@ -102,3 +99,24 @@ end
 function Base.isdone(node_set :: NodeSet, state :: Int)
     return length(node_set) <= state
 end
+
+
+## EXTRA
+
+"""
+f(node :: NodeSet) :: Bool
+"""
+function Base.filter(f, node_set :: NodeSet)
+    keep_indices = [f(node) ? i_node : -1 for (i_node, node) in enumerate(node_set)]
+    filter!(i -> i > 0, keep_indices)
+    new_node_set = copy_node_set(node_set)
+    return new_node_set[keep_indices]
+end
+
+function Base.filter!(f, node_set :: NodeSet)
+    keep_indices = [f(node) ? i_node : -1 for (i_node, node) in enumerate(node_set)]
+    filter!(i -> i > 0, keep_indices)
+    keep_indices!(node_set, keep_indices)
+    return nothing
+end
+

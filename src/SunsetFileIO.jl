@@ -97,6 +97,8 @@ export
     length,
     size,
     isdone,
+    filter,
+    filter!,
 
     reflect_origin!,
     reflect!,
