@@ -123,11 +123,13 @@ export
     ask_skip,
     ask_scale,
     ask_reflect,
+    cartesian_interpolate,
 
     open_and_write_vtu
 
 
-using Random, Dates, WriteVTK, ReadVTK, DelimitedFiles
+
+using Random, Dates, WriteVTK, ReadVTK, DelimitedFiles, PyCall
 
 include("fields.jl")
 include("node_sets.jl")
@@ -137,6 +139,7 @@ include("skip.jl")
 include("read_files.jl")
 include("ask.jl")
 include("vtu_writer.jl")
+include("cartesian_interpolate.jl")
 
 
 end
