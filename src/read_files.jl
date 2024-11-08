@@ -18,10 +18,10 @@ function read_nodes_files(data_out_path, D, n_cores)
     return join_node_sets(node_sets...)
 end
 
-function read_fields_files(data_out_path, D, Y, n_cores, i_frame)
+function read_fields_files(data_out_path, D, Y, n_cores, i_frame; has_ω = false)
     node_sets = NodeSet[]
     for i_core in 0:(n_cores - 1)
-        new_node_set = read_file(fields_file_path(data_out_path, i_core, i_frame), fields_fields(D, Y), 5)
+        new_node_set = read_file(fields_file_path(data_out_path, i_core, i_frame), fields_fields(D, Y; has_ω = has_ω), 5)
         push!(node_sets, new_node_set)
     end
     return join_node_sets(node_sets...)
@@ -66,14 +66,14 @@ end
 
 
 
-function read_nodes_and_fields_files(data_out_path, D, Y, n_cores, i_frame)
+function read_nodes_and_fields_files(data_out_path, D, Y, n_cores, i_frame; has_ω = false)
     node_set = read_nodes_files(data_out_path, D, n_cores)
-    fields_set = read_fields_files(data_out_path, D, Y, n_cores, i_frame)
+    fields_set = read_fields_files(data_out_path, D, Y, n_cores, i_frame; has_ω = has_ω)
     return stitch_node_sets(node_set, fields_set)
 end
 
-function read_nodes_and_fields_files(node_files_set, data_out_path, D, Y, n_cores, i_frame)
-    fields_set = read_fields_files(data_out_path, D, Y, n_cores, i_frame)
+function read_nodes_and_fields_files(node_files_set, data_out_path, D, Y, n_cores, i_frame; has_ω = false)
+    fields_set = read_fields_files(data_out_path, D, Y, n_cores, i_frame; has_ω = has_ω)
     return stitch_node_sets(node_files_set, fields_set)
 end
 
