@@ -112,6 +112,9 @@ export
     keep_indices!,
     get_shuffle_keep_indices,
 
+    nodes_file_path,
+    fields_file_path,
+    flame_file_path,
     read_nodes_files,
     read_fields_files,
     read_IPART_file,
