@@ -1,9 +1,3 @@
-# struct Node
-#     fields :: Vector{Field}
-#     values :: Vector{FieldValue}
-# end
-
-
 ## INDEXING
 
 function Base.firstindex(node_set :: NodeSet)
@@ -35,7 +29,7 @@ function Base.setindex!(node_set :: NodeSet, field_values, field_name :: String)
         set_field_by_name!(node_set, field_name, field_values)
     else
         printstyled("Field doesn't yet exist in node set, adding field.", color = :red)
-        add_field!(node_set, Field(field_name, FieldValue))
+        add_field!(node_set, Field(field_name, tyepof(FieldValue)), field_values)
     end
     return nothing
 end

@@ -50,6 +50,8 @@ function scale!(node_set :: NodeSet, scaling)
     # Scaling also affects s and h if they're there
     check_field(node_set, "s") && set_field_by_name!(node_set, "s", get_field_by_name(node_set, "s") .* scaling)
     check_field(node_set, "h") && set_field_by_name!(node_set, "h", get_field_by_name(node_set, "h") .* scaling)
+    D = check_position(node_set)
+    check_field(node_set, "vol") && set_field_by_name!(node_set, "vol", get_field_by_name(node_set, "vol") .* scaling^D)
     return nothing
 end
 

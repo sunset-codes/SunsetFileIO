@@ -40,9 +40,9 @@ function read_IPART_file(file_path, D, n_line_skip)
     for i_node in indices
         new_fd_set = FieldValue[
             x[i_node] + 1 * s[i_node] * n_x[i_node]    y[i_node] + 1 * s[i_node] * n_y[i_node]    -1    0.0    0.0    s[i_node];
-            x[i_node] + 2 * s[i_node] * n_x[i_node]    y[i_node] + 1 * s[i_node] * n_y[i_node]    -2    0.0    0.0    s[i_node];
-            x[i_node] + 3 * s[i_node] * n_x[i_node]    y[i_node] + 1 * s[i_node] * n_y[i_node]    -3    0.0    0.0    s[i_node];
-            x[i_node] + 4 * s[i_node] * n_x[i_node]    y[i_node] + 1 * s[i_node] * n_y[i_node]    -4    0.0    0.0    s[i_node];
+            x[i_node] + 2 * s[i_node] * n_x[i_node]    y[i_node] + 2 * s[i_node] * n_y[i_node]    -2    0.0    0.0    s[i_node];
+            x[i_node] + 3 * s[i_node] * n_x[i_node]    y[i_node] + 3 * s[i_node] * n_y[i_node]    -3    0.0    0.0    s[i_node];
+            x[i_node] + 4 * s[i_node] * n_x[i_node]    y[i_node] + 4 * s[i_node] * n_y[i_node]    -4    0.0    0.0    s[i_node];
         ]
         node_set = join_node_sets(node_set, NodeSet(IPART_fields(2), new_fd_set))
     end

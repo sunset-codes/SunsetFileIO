@@ -47,17 +47,25 @@ flame
 module SunsetFileIO
 
 export
+    ### fields.jl
+    FieldValueScalar,
     FieldValue,
     Field,
+
     axes_strings,
     v_strings,
     n_strings,
     Y_string,
+    ω_string,
+    i_strings,
+
     position_fields,
     s_field,
     h_field,
     type_field,
     n_fields,
+    proc_field,
+
     rho_field,
     v_fields,
     vort_field,
@@ -65,13 +73,21 @@ export
     p_field,
     hrr_field,
     Y_fields,
+    ω_fields,
     rhoE_field,
-    proc_field,
+
+    i_fields,
+    s_interp_field,
+
+    node_linkage_field,
+    vol_field,
+
     nodes_fields,
     fields_fields,
     IPART_fields,
     flame_fields,
 
+    ### node_sets.jl
     NodeSet,
     stitch_node_sets,
     join_node_sets,
@@ -86,6 +102,7 @@ export
     add_field!,
     copy_node_set,
 
+    ### iteration_indexing.jl
     getindex,
     setindex!,
     firstindex,
@@ -100,18 +117,21 @@ export
     filter,
     filter!,
 
+    ### transform.jl
     reflect_origin!,
     reflect!,
     scale!,
     translate!,
 
+    ### keep.jl
     keep_check_stride,
     keep_check_box,
-    keep_check_max,keep_indices,
+    keep_check_max,
     keep_indices,
     keep_indices!,
     get_shuffle_keep_indices,
 
+    ### read_files.jl
     nodes_file_path,
     fields_file_path,
     flame_file_path,
@@ -122,27 +142,36 @@ export
     read_vtu_file,
     read_nodes_and_fields_files,
 
+    ### ask.jl
     ask_file_type,
     ask_skip,
     ask_scale,
     ask_reflect,
+
+    ### cartesian_interpolate.jl
     cartesian_interpolate,
 
-    open_and_write_vtu
+    ### vtu_writer.jl
+    open_and_write_vtu,
+
+    ### sph.jl
+    calculate_node_linkage,
+    add_volumes!
 
 
 
-using Random, Dates, WriteVTK, ReadVTK, DelimitedFiles, PyCall
+using Random, Dates, WriteVTK, ReadVTK, DelimitedFiles, PyCall, ProgressMeter
 
 include("fields.jl")
 include("node_sets.jl")
 include("iteration_indexing.jl")
 include("transform.jl")
-include("skip.jl")
+include("keep.jl")
 include("read_files.jl")
 include("ask.jl")
 include("vtu_writer.jl")
 include("cartesian_interpolate.jl")
+include("sph.jl")
 
 
 end
