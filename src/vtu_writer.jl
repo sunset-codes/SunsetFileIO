@@ -55,7 +55,7 @@ end
 
 function group_names(node_set, names)
     grouped_names = Any[]
-    for field_name_group in [axes_strings, v_strings, n_strings]
+    for field_name_group in [axes_strings, u_strings, n_strings]
         if !all([!check_field(node_set, field_name) for field_name in field_name_group])      # If we have any of this data, add those fields
             push!(grouped_names, filter(name -> name in field_name_group, names))
             filter!(name -> !(name in field_name_group), names)
@@ -66,7 +66,7 @@ end
 
 nice_field_titles = Dict(
     [axis_string => axis_string for axis_string in axes_strings]...,
-    [v_string => v_string for v_string in v_strings]...,
+    [u_string => u_string for u_string in u_strings]...,
     [n_string => n_string for n_string in n_strings]...,
     "s" => "Node Spacing",
     "h" => "Stencil Size",
@@ -91,7 +91,7 @@ function get_nice_field_title(names)
     if length(names) > 1
         if names[1] in axes_strings
             names_title = "Coordinate"
-        elseif names[1] in v_strings
+        elseif names[1] in u_strings
             names_title = "Velocity"
         elseif names[1] in n_strings
             names_title = "Boundary Normal"

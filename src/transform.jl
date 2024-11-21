@@ -13,8 +13,8 @@ Reflect the vectors contained in vectors on the line 0 to p
 function reflect_origin!(vectors :: T, p) where { T <: AbstractVector }
     for (i_node, v) in enumerate(vectors)
         l_v = dot(p, v) / dot(p, p)
-        v_new = 2 * (l_v * p) - v
-        vectors[i_node] = v_new
+        u_new = 2 * (l_v * p) - v
+        vectors[i_node] = u_new
     end
     return nothing
 end

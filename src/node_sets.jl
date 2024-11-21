@@ -43,7 +43,7 @@ end
 
 vector_fields_scalars = Dict(
     "position" => axes_strings,
-    "velocity" => v_strings,
+    "velocity" => u_strings,
     "normal" => n_strings
 )
 

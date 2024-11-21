@@ -53,7 +53,7 @@ export
     Field,
 
     axes_strings,
-    v_strings,
+    u_strings,
     n_strings,
     Y_string,
     ω_string,

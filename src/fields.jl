@@ -10,7 +10,7 @@ end
 
 
 axes_strings = ["x", "y", "z"]
-v_strings = [string("v_", axes_strings[i_axis]) for i_axis in 1:3]
+u_strings = [string("u_", axes_strings[i_axis]) for i_axis in 1:3]
 n_strings = [string("n_", axes_strings[i_axis]) for i_axis in 1:3]
 Y_string(i_Y) = string("Y", i_Y)
 ω_string(i_Y) = string("ω", i_Y)
@@ -24,7 +24,7 @@ n_fields = [Field(n_strings[i_axis], Float64) for i_axis in 1:3]
 proc_field = Field("proc", Int64)
 
 rho_field = Field("rho", Float64)
-u_fields = [Field(v_strings[i_axis], Float64) for i_axis in 1:3]
+u_fields = [Field(u_strings[i_axis], Float64) for i_axis in 1:3]
 vort_field = Field("vort", Float64)
 T_field = Field("T", Float64)
 p_field = Field("p", Float64)
