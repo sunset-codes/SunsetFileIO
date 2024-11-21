@@ -76,7 +76,7 @@ end
 
 function get_field_index(node_set :: NodeSet, field_name)
     if !check_field(node_set, field_name)
-        throw(ArgumentError("That field does not exist in this node set"))
+        throw(ArgumentError("Field $(field_name) does not exist in this node set"))
     end
     first_node_names = [field.name for field in node_set.fields]
     i_field = findall(val -> val == field_name, first_node_names)[1]

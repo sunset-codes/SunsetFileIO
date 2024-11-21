@@ -45,7 +45,7 @@ nodes_fields(D) = Field[
     h_field,
     type_field,
 ]
-fields_fields(D, Y; has_ω = false) = begin
+fields_fields(D, Y; has_ω = true, has_vol = true) = begin
     fields = Field[
         rho_field,
         v_fields[1:D]...,
@@ -57,6 +57,9 @@ fields_fields(D, Y; has_ω = false) = begin
     ]
     if has_ω
         push!(fields, ω_fields(Y)...)
+    end
+    if has_vol
+        push!(fields, vol_field)
     end
     return fields
 end
