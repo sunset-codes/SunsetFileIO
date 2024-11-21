@@ -24,7 +24,7 @@ n_fields = [Field(n_strings[i_axis], Float64) for i_axis in 1:3]
 proc_field = Field("proc", Int64)
 
 rho_field = Field("rho", Float64)
-v_fields = [Field(v_strings[i_axis], Float64) for i_axis in 1:3]
+u_fields = [Field(v_strings[i_axis], Float64) for i_axis in 1:3]
 vort_field = Field("vort", Float64)
 T_field = Field("T", Float64)
 p_field = Field("p", Float64)
@@ -48,7 +48,7 @@ nodes_fields(D) = Field[
 fields_fields(D, Y; has_ω = true, has_vol = true) = begin
     fields = Field[
         rho_field,
-        v_fields[1:D]...,
+        u_fields[1:D]...,
         vort_field,
         T_field,
         p_field,
@@ -71,7 +71,7 @@ IPART_fields(D) = Field[
 ]
 flame_fields(D, Y) = Field[
     position_fields[1:D]...,
-    v_fields[1:D]...,
+    u_fields[1:D]...,
     vort_field,
     rho_field,
     rhoE_field,

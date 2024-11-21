@@ -67,7 +67,7 @@ export
     proc_field,
 
     rho_field,
-    v_fields,
+    u_fields,
     vort_field,
     T_field,
     p_field,
